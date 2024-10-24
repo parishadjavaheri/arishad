@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Style for the game -->
+  <style>
+    /* The style of each square (a button) in the Tic-Tac-Toe grid */
+    .square {
+      background: #fff; /* White background */
+      border: 1px solid #999; /* Border color */
+      float: left; /* Arrange squares next to each other */
+      font-size: 24px; /* Text size */
+      font-weight: bold; /* Bold text */
+      line-height: 34px; /* Line height inside the button */
+      height: 34px; /* Height of each square */
+      width: 34px; /* Width of each square */
+      margin-right: -1px; /* Removes gaps between squares */
+      margin-top: -1px; /* Removes gaps between rows */
+      text-align: center; /* Center the text inside the button */
+      cursor: pointer; /* Change cursor to a pointer when hovering */
+    }
+
+    /* This helps make sure rows clear after each other */
+    .board-row:after {
+      clear: both;
+      content: "";
+      display: table;
+    }
+
+    /* Style for the status message (e.g., "Next player: X") */
+    .status {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Style for the reset button */
+    .reset-button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Display whose turn it is -->
+  <div class="status">Next player: X</div>
+
+  <!-- The Tic-Tac-Toe board: 3 rows of 3 squares each -->
+  <div class="board-row">
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+  </div>
+  <div class="board-row">
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+  </div>
+  <div class="board-row">
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+    <button class="square" onclick="makeMove(this)"></button>
+  </div>
+
+  <!-- Reset button to clear the board and start again -->
+  <button class="reset-button" onclick="resetBoard()">Reset Game</button>
+
+  <!-- JavaScript: Adds interactivity to the game -->
+  <script>
+    let currentPlayer = 'X'; // 'X' goes first
+    let board = Array(9).fill(null); // Empty board (9 squares)
+
+    // Function that handles when a player makes a move
+    function makeMove(square) {
+      const index = Array.from(document.querySelectorAll('.square')).indexOf(square); // Find out which square was clicked
+
+      if (!square.textContent && !calculateWinner(board)) { // If the square is empty and no one has won
+        board[index] = currentPlayer; // Mark the board with the current player's symbol
+        square.textContent = currentPlayer; // Display the player's symbol (X or O)
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch to the next player
+        document.querySelector('.status').textContent = `Next player: ${currentPlayer}`; // Update the status message
+
+        // Check if someone has won
+        const winner = calculateWinner(board);
+        if (winner) {
+          document.querySelector('.status').textContent = `Winner: ${winner}`; // Announce the winner
+        } else if (!board.includes(null)) {
+          document.querySelector('.status').textContent = "It's a tie!"; // If no squares are left, it's a tie
+        }
+      }
+    }
+
+    // Function that checks if someone has won the game
+    function calculateWinner(board) {
+      const lines = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
+        [0, 4, 8], [2, 4, 6]              // Diagonals
+      ];
+
+      // Check each line to see if all 3 squares have the same player's symbol
+      for (let [a, b, c] of lines) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a]; // Return the symbol ('X' or 'O') if there's a winner
+        }
+      }
+      return null; // Return null if there's no winner yet
+    }
+
+    // Function to reset the board when the game is restarted
+    function resetBoard() {
+      board.fill(null); // Clear the board
+      currentPlayer = 'X'; // Start again with player 'X'
+      document.querySelector('.status').textContent = `Next player: ${currentPlayer}`; // Reset the status message
+      document.querySelectorAll('.square').forEach(square => square.textContent = ''); // Clear all the squares
+    }
+  </script>
+
+</body>
+</html>
